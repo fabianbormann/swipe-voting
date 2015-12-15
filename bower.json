@@ -1,0 +1,28 @@
+{
+  "name": "swipe-voting",
+  "version": "1.0.6",
+  "authors": [
+    "Anonymous <anonymous@example.com>"
+  ],
+  "description": "An element providing a solution to no problem in particular.",
+  "keywords": [
+    "web-component",
+    "polymer",
+    "swipe",
+    "vote",
+    "tinder"
+  ],
+  "main": "swipe-voting.html",
+  "license": "http://polymer.github.io/LICENSE.txt",
+  "homepage": "https://github.com/fabianbormann/swipe-voting/",
+  "ignore": [
+    "/.*"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.2.0"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "web-component-tester": "^3.4.0"
+  }
+}

@@ -1,7 +1,5 @@
 <link rel="import" href="../polymer/polymer.html">
-<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.4/jquery.mobile-1.4.4.min.css">
-<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
-<script src="http://code.jquery.com/mobile/1.4.4/jquery.mobile-1.4.4.min.js"></script>
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 
 <!--
 @demo demo/index.html
@@ -11,18 +9,8 @@
   <template>
     <style>
       #container {
-        width: 500px;
-        margin: auto !important;
-        display: block;
-        height: 500px;
-        position: relative;
-        list-style-type: none;
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        -khtml-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
+        @apply(--layout-horizontal);
+        @apply(--layout-center-justified);
       }
     </style>
     <div id="container">

@@ -1,82 +1,62 @@
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-card/paper-card.html">
+<link rel="import" href="../paper-styles/color.html">
 
 <!--
 @demo demo/index.html
 -->
 
 <dom-module id="swipe-voting-card">
-<template>
-  <style>
-   .buddy {
-    display: none;
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.2);
-    color: #fff;
-    padding: 20px;
-    width: 360px;
-    height: 360px;
-    top: 50px;
-    left: 50px;
-    position: absolute;
-    cursor: hand;
-  }
-  .avatar {
-    background: #222;
-    width: 340px;
-    height: 340px;
-    display: block;
-    margin-top: 10px;
-    margin-left: 10px;
-    background-size: 100% auto !important;
-    background-position: center;
-    background-repeat: no-repeat;
-  }
-  .rotate-left {
-    transform: rotate(30deg) scale(0.8);
-    transition: 1s;
-    margin-left: 400px;
-    cursor: e-resize;
-    opacity: 0;
-  }
-  .rotate-right {
-    transform: rotate(-30deg) scale(0.8);
-    transition: 1s;
-    opacity: 0;
-    margin-left: -400px;
-    cursor: w-resize;
-  }
-  .like {
-    border-radius: 5px;
-    padding: 5px 10px;
-    border: 2px solid green;
-    color: green;
-    text-transform: uppercase;
-    font-size: 15px;
-    position: absolute;
-    top: 50px;
-    right: 40px;
-    text-shadow: none;
-  }
-  .dislike {
-    border-radius: 5px;
-    padding: 5px 10px;
-    border: 2px solid red;
-    color: red;
-    text-transform: uppercase;
-    font-size: 15px;
-    position: absolute;
-    top: 50px;
-    left: 40px;
-    text-shadow: none;
-  }
-</style>
+  <template>
+    <style>
+      .accept > #swipe-overlay {
+        background: var(--paper-green-500);
+      }
 
-<div class="buddy">
-  <div class="avatar" style="display: block; background-image: url({{backgroundImage}})">   
-    <content></content> 
-  </div>
-</div>   
+      .accept {
+        --paper-card-header-color: var(--paper-green-500);
+        transform: translate(150px, 0px);
+        transition: transform 500ms;
+        opacity: 0.5;
+      }
+
+      .reject > #swipe-overlay {
+        background: var(--paper-red-500);
+      }
+
+      .reject {
+        --paper-card-header-color: var(--paper-red-500);
+        transform: translate(-150px, 0px);
+        transition: transform 500ms;
+        opacity: 0.5;
+      }
+
+      #swipe-overlay {
+        position: absolute;
+        z-index: 5;
+        opacity: 0.5;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%; 
+      }
+
+      paper-card {
+        position: relative;
+        z-index: 0;
+      }
+
+      paper-card > .title-text {
+        text-decoration: none;
+      }
+  </style>
+
+  
+  <paper-card heading="{{cardTitle}}">
+    <div id="swipe-overlay" on-track="handleTrack"></div>
+    <div class="card-content"><content></content></div>
+  </paper-card>
+
 </template>
 
 <script>
@@ -84,36 +64,59 @@
     is: 'swipe-voting-card',
 
     properties: {
-      backgroundImage: {
+      backgroundColor: {
+        type: String,
+        notify: true,
+        observer: '_backgroundColorChanged'
+      },
+
+      color: {
+        type: String,
+        notify: true,
+        observer: '_colorChanged'
+      },
+
+      cardTitle: {
         type: String
       }
     },
 
-    ready: function() {
-      $(".buddy").on("swiperight",function(){
-        $(this).addClass('rotate-left').delay(700).fadeOut(1);
-        $('.buddy').find('.status').remove();
+    _backgroundColorChanged: function(backgroundColor) {
+      this.$$('paper-card').style.backgroundColor = backgroundColor;
+    },
 
-        $(this).append('<div class="status like">Like!</div>');      
-        if ( $(this).is(':last-child') ) {
-          $('.buddy:nth-child(1)').removeClass ('rotate-left rotate-right').fadeIn(300);
-        } else {
-          $(this).next().removeClass('rotate-left rotate-right').fadeIn(400);
+    _colorChanged: function(color) {
+      this.$$('paper-card').$$('.title-text').style.color = color;
+    },
+
+    handleTrack: function(event) {
+      switch(event.detail.state) {
+          case 'start':
+            console.log("start tracking @ "+event.detail.x)
+            this.position = event.detail.x;
+            break;
+          case 'track':
+            var tolerance = 10;
+            console.log(this.position+tolerance)
+            console.log(event.detail.x)
+            console.log(event.detail.x > this.position+tolerance)
+            if(event.detail.x > this.position+tolerance) {
+              this.$$('paper-card').classList.add('accept');
+              this.$$('paper-card').classList.remove('reject');
+            }
+            else if(event.detail.x < this.position-tolerance){
+              this.$$('paper-card').classList.add('reject')
+              this.$$('paper-card').classList.remove('accept');         
+            }
+            else {
+              this.$$('paper-card').classList.remove('accept');
+              this.$$('paper-card').classList.remove('reject');  
+            }
+            break;
+          case 'end':
+            this.$$('paper-card').classList.remove('accept');
+            this.$$('paper-card').classList.remove('reject');  
         }
-      });  
-
-      $(".buddy").on("swipeleft",function(){
-        $(this).addClass('rotate-right').delay(700).fadeOut(1);
-        $('.buddy').find('.status').remove();
-        $(this).append('<div class="status dislike">Dislike!</div>');
-
-        if ( $(this).is(':last-child') ) {
-          $('.buddy:nth-child(1)').removeClass ('rotate-left rotate-right').fadeIn(300);
-          alert('Na-na!');
-        } else {
-          $(this).next().removeClass('rotate-left rotate-right').fadeIn(400);
-        } 
-      });
     }
 
   });

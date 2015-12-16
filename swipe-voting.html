@@ -1,5 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="swipe-voting-card.html">
 
 <!--
 @demo demo/index.html
@@ -8,19 +9,73 @@
 <dom-module id="swipe-voting">
   <template>
     <style>
-      #container {
+      :host {
         @apply(--layout-horizontal);
         @apply(--layout-center-justified);
       }
+
+      #defaultCard {
+        background: #eee;
+        display: none;
+      }
     </style>
-    <div id="container">
-      <content></content>
-    </div>
+
+    <content></content>
+
+    <paper-card id="defaultCard">
+      <div id="swipe-overlay" on-track="handleTrack"></div>
+      <div class="card-content"><h1>{{defaultMessage}}</h1></div>
+    </paper-card>
+
   </template>
 
   <script>
     Polymer({
-      is: 'swipe-voting'
+      is: 'swipe-voting',
+
+      listeners: {
+        'reject': 'handleRejection',
+        'accept': 'handleAcception'
+      },
+
+      properties: {
+        active: {
+          type: Number,
+          notify: true,
+          value: 0
+        },
+
+        defaultMessage: {
+          type: String,
+          notify: true,
+          value: "You have reached the end."
+        }
+      },
+
+      ready: function () {
+        for (i = 0; i < this.children.length; i++) {
+          this.children[i].index = i;
+          if(i == this.active)
+            this.children[i].style.display = "block";
+          else
+            this.children[i].style.display = "none";
+        }
+      },
+
+      handleRejection: function (event) {
+        if(event.detail.index < this.children.length)
+          this.children[event.detail.index+1].style.display = "block";
+        else 
+          this.$$('#defaultCard').style.display = "block"
+      },
+
+      handleAcception: function (event) {
+        if(event.detail.index < this.children.length)
+          this.children[event.detail.index+1].style.display = "block";
+        else 
+          this.$$('#defaultCard').style.display = "block"
+      }
+
     });
   </script>
 </dom-module>

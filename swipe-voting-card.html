@@ -2,6 +2,8 @@
 <link rel="import" href="../paper-card/paper-card.html">
 <link rel="import" href="../paper-styles/color.html">
 
+<link rel="stylesheet" href="animate.min.css">
+
 <!--
 @demo demo/index.html
 -->
@@ -31,6 +33,18 @@
         opacity: 0.5;
       }
 
+      .swipeLeftOut {
+        transform: translate(-1000px, 0px);
+        transition: transform 200ms;
+        opacity: 0.1;
+      }
+
+      .swipeRightOut {
+        transform: translate(1000px, 0px);
+        transition: transform 200ms;
+        opacity: 0.1;
+      }
+
       #swipe-overlay {
         position: absolute;
         z-index: 5;
@@ -43,6 +57,8 @@
 
       paper-card {
         position: relative;
+        -vendor-animation-duration: 0.5s;
+        -vendor-animation-delay: 0s;
         z-index: 0;
       }
 
@@ -51,10 +67,9 @@
       }
   </style>
 
-  
-  <paper-card heading="{{cardTitle}}">
+  <paper-card class="animated">
     <div id="swipe-overlay" on-track="handleTrack"></div>
-    <div class="card-content"><content></content></div>
+    <div class="card-content"><h1>{{cardTitle}}</h1><content></content></div>
   </paper-card>
 
 </template>
@@ -77,7 +92,13 @@
       },
 
       cardTitle: {
-        type: String
+        type: String,
+        notify: true
+      },
+
+      index: {
+        type: Number,
+        value: 0
       }
     },
 
@@ -92,11 +113,10 @@
     handleTrack: function(event) {
       switch(event.detail.state) {
           case 'start':
-            console.log("start tracking @ "+event.detail.x)
             this.position = event.detail.x;
             break;
           case 'track':
-            var tolerance = 10;
+            var tolerance = 20;
             console.log(this.position+tolerance)
             console.log(event.detail.x)
             console.log(event.detail.x > this.position+tolerance)
@@ -114,8 +134,20 @@
             }
             break;
           case 'end':
-            this.$$('paper-card').classList.remove('accept');
-            this.$$('paper-card').classList.remove('reject');  
+            if(this.$$('paper-card').classList.contains('accept')) {
+              this.$$('paper-card').classList.add('fadeOutRight');
+              this.async(function() {
+                this.style.display = "none"; 
+                this.fire('accept', {index: this.index});
+              }, 1000);
+            }
+            else if (this.$$('paper-card').classList.contains('reject')) {
+              this.$$('paper-card').classList.add('fadeOutLeft');
+              this.async(function() {
+                this.style.display = "none"; 
+                this.fire('reject', {index: this.index});
+              }, 1000);
+            }
         }
     }
 

@@ -9,13 +9,21 @@
     <link rel="import" href="../swipe-voting-card.html">
   </head>
   <body unresolved>
-    <p>An example of <code>&lt;swipe-voting&gt;</code>:</p>
-    <swipe-voting>
-      <swipe-voting-card background-color="#343434" color="#fff" card-title="Do you like kitten?"></swipe-voting-card>
-      <swipe-voting-card background-color="#a50535" color="#fff" card-title="Do you like dogs?"></swipe-voting-card>
-      <swipe-voting-card background-color="#66aa09" color="#fff" card-title="Do you like birds?"></swipe-voting-card>
-      <swipe-voting-card background-color="#33dd23" color="#fff" card-title="Do you like elephants?"></swipe-voting-card>
-    </swipe-voting>
-
+    <template id="demo" is="dom-bind">
+      <p>An example of <code>&lt;swipe-voting&gt;</code>:</p>
+      <swipe-voting>
+        <template is="dom-repeat" items="{{questions}}" as="question">
+          <swipe-voting-card background-color="#343434" color="#fff" card-title$="{{question}}"></swipe-voting-card>
+      </swipe-voting>
+    </template>
+    <script>
+      var demo = document.querySelector('#demo');
+      demo.questions = [
+        "Do you like kitten?",
+        "Do you like dogs?",
+        "Do you like birds?",
+        "Do you like elephants?"
+      ];
+    </script>
   </body>
 </html>

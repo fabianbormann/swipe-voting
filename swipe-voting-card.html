@@ -102,6 +102,10 @@
       }
     },
 
+    attached: function() {
+      this.parentNode.refresh();
+    },
+
     _backgroundColorChanged: function(backgroundColor) {
       this.$$('paper-card').style.backgroundColor = backgroundColor;
     },
@@ -117,9 +121,6 @@
             break;
           case 'track':
             var tolerance = 20;
-            console.log(this.position+tolerance)
-            console.log(event.detail.x)
-            console.log(event.detail.x > this.position+tolerance)
             if(event.detail.x > this.position+tolerance) {
               this.$$('paper-card').classList.add('accept');
               this.$$('paper-card').classList.remove('reject');

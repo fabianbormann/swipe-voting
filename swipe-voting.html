@@ -50,6 +50,18 @@
           notify: true,
           value: "You have reached the end."
         }, 
+
+        onrejection: {
+          type: Object,
+          notify: true,
+          value: function() {return 0;}
+        },
+
+        onacception: {
+          type: Object,
+          notify: true,
+          value: function() {return 0;}
+        }
       },
 
       refresh: function () {
@@ -63,6 +75,7 @@
       },
 
       handleRejection: function (event) {
+        this.onrejection(event.detail.index, this.children[event.detail.index].cardTitle);
         if(event.detail.index < this.queryAllEffectiveChildren('swipe-voting-card').length-1)
           this.children[event.detail.index+1].style.display = "block";
         else 
@@ -70,6 +83,12 @@
       },
 
       handleAcception: function (event) {
+        this.onacception(event.detail.index, this.children[event.detail.index].cardTitle);
+        this.fire('swipe-card', {
+          "id": event.detail.index,
+          "title": this.children[event.detail.index].cardTitle,
+          "state": 'accepted'
+        });
         if(event.detail.index < this.queryAllEffectiveChildren('swipe-voting-card').length-1)
           this.children[event.detail.index+1].style.display = "block";
         else 

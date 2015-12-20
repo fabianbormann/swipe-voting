@@ -11,7 +11,7 @@
   <body unresolved>
     <template id="demo" is="dom-bind">
       <p>An example of <code>&lt;swipe-voting&gt;</code>:</p>
-      <swipe-voting>
+      <swipe-voting id="voting" onrejection="{{onReject}}" onacception="{{onAccept}}">
         <template is="dom-repeat" items="{{questions}}" as="question">
           <swipe-voting-card background-color="#343434" color="#fff" card-title$="{{question}}"></swipe-voting-card>
       </swipe-voting>
@@ -24,6 +24,18 @@
         "Do you like birds?",
         "Do you like elephants?"
       ];
+
+      demo.onReject = function(id, title) {
+        console.log(title+" was rejected.");
+      }
+
+      demo.onAccept = function(id, title) {
+        console.log(title+" was accepted.");
+      }
+
+      demo.addEventListener('swipe-card', function(event) {
+        console.log(event.detail.title+" was "+event.detail.state);
+      })
     </script>
   </body>
 </html>

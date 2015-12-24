@@ -42,7 +42,8 @@
         active: {
           type: Number,
           notify: true,
-          value: 0
+          value: 0,
+          observer: '_activeChanged'
         },
 
         defaultMessage: {
@@ -65,34 +66,38 @@
       },
 
       refresh: function () {
-        for (i = 0; i < this.children.length; i++) {
-          this.children[i].index = i;
-          if(i == this.active)
-            this.children[i].style.display = "block";
-          else
-            this.children[i].style.display = "none";
+        for (i = 0; i < this.queryAllEffectiveChildren('swipe-voting-card').length; i++) {
+          this.queryAllEffectiveChildren('swipe-voting-card')[i].index = i;
+          
+          if(this.active < this.queryAllEffectiveChildren('swipe-voting-card').length) {
+            if(i == this.active) {
+              this.queryAllEffectiveChildren('swipe-voting-card')[i].style.display = "block";
+              this.queryAllEffectiveChildren('swipe-voting-card')[i].$$('paper-card').classList.remove('reject');
+              this.queryAllEffectiveChildren('swipe-voting-card')[i].$$('paper-card').classList.remove('accept');
+              this.queryAllEffectiveChildren('swipe-voting-card')[i].$$('paper-card').classList.remove('fadeOutRight');
+              this.queryAllEffectiveChildren('swipe-voting-card')[i].$$('paper-card').classList.remove('fadeOutLeft');
+            }
+            else
+              this.queryAllEffectiveChildren('swipe-voting-card')[i].style.display = "none";
+          }
+          else {
+            this.$$('#defaultCard').style.display = "block"
+          }
         }
       },
 
       handleRejection: function (event) {
         this.onrejection(event.detail.index, this.children[event.detail.index].cardTitle);
-        if(event.detail.index < this.queryAllEffectiveChildren('swipe-voting-card').length-1)
-          this.children[event.detail.index+1].style.display = "block";
-        else 
-          this.$$('#defaultCard').style.display = "block"
+        this.active++;
       },
 
       handleAcception: function (event) {
         this.onacception(event.detail.index, this.children[event.detail.index].cardTitle);
-        this.fire('swipe-card', {
-          "id": event.detail.index,
-          "title": this.children[event.detail.index].cardTitle,
-          "state": 'accepted'
-        });
-        if(event.detail.index < this.queryAllEffectiveChildren('swipe-voting-card').length-1)
-          this.children[event.detail.index+1].style.display = "block";
-        else 
-          this.$$('#defaultCard').style.display = "block"
+        this.active++;
+      },
+
+      _activeChanged: function() {
+        this.refresh();
       }
 
     });

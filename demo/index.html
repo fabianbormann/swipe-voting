@@ -11,7 +11,7 @@
   <body unresolved>
     <template id="demo" is="dom-bind">
       <p>An example of <code>&lt;swipe-voting&gt;</code>:</p>
-      <swipe-voting id="voting" onrejection="{{onReject}}" onacception="{{onAccept}}">
+      <swipe-voting id="voting" onrejection="{{onReject}}" onacception="{{onAccept}}" show-spinner>
         <template is="dom-repeat" items="{{questions}}" as="question">
           <swipe-voting-card background-color="#343434" color="#fff" card-title$="{{question}}"></swipe-voting-card>
       </swipe-voting>
@@ -33,8 +33,9 @@
         console.log(title+" was accepted.");
       }
 
-      demo.addEventListener('swipe-card', function(event) {
-        console.log(event.detail.title+" was "+event.detail.state);
+      document.querySelector('#voting').addEventListener('card-stack-empty', function(event) {
+        console.log("Card stack empty. Active card is "+event.detail.active+" and there are "+event.detail.cards+" cards.");
+        console.log("Load new cards.");
       })
     </script>
   </body>

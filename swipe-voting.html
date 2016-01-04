@@ -1,6 +1,7 @@
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../iron-flex-layout/classes/iron-flex-layout.html">
 <link rel="import" href="swipe-voting-card.html">
+<link rel="import" href="../paper-spinner/paper-spinner.html">
 
 <!--
 @demo demo/index.html
@@ -16,6 +17,8 @@
 
       #defaultCard {
         background: #eee;
+        min-width: 150px;
+        min-height: 100px;
         display: none;
       }
     </style>
@@ -24,7 +27,12 @@
 
     <paper-card id="defaultCard">
       <div id="swipe-overlay" on-track="handleTrack"></div>
-      <div class="card-content"><h1>{{defaultMessage}}</h1></div>
+      <template is="dom-if" if="{{showSpinner}}">
+        <div class="card-content layout fit horizontal center-center"><paper-spinner active></paper-spinner></div>
+      </template>
+      <template is="dom-if" if="{{!showSpinner}}">
+        <div class="card-content"><h1>{{defaultMessage}}</h1></div>
+      </template>
     </paper-card>
 
   </template>
@@ -62,6 +70,12 @@
           type: Object,
           notify: true,
           value: function() {return 0;}
+        },
+
+        showSpinner: {
+          type: Boolean,
+          notify: true,
+          value: false
         }
       },
 
@@ -81,7 +95,11 @@
               this.queryAllEffectiveChildren('swipe-voting-card')[i].style.display = "none";
           }
           else {
-            this.$$('#defaultCard').style.display = "block"
+            this.$$('#defaultCard').style.display = "block";
+            this.fire('card-stack-empty', {
+              "active": this.active,
+              "cards": this.queryAllEffectiveChildren('swipe-voting-card').length
+            });
           }
         }
       },
